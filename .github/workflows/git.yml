@@ -12,7 +12,7 @@ permissions: {}
 jobs:
   test:
     container:
-      image: trialrrdq7a.jfrog.io/docker-trial/go-ci-base:1.22-warm
+      image: trialrrdq7a.jfrog.io/docker-trial/go-ci-base:1.24-warm
       credentials:
         username: ${{ secrets.ARTIFACTORY_USER }}
         password: ${{ secrets.ARTIFACTORY_TOKEN }}
