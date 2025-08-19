@@ -1,4 +1,4 @@
-FROM ubuntu:24.04
+FROM ghcr.io/catthehacker/ubuntu:custom-latest
 
 ARG GO_VERSION=1.25.0
 
