@@ -1,6 +1,6 @@
 # Dockerfile
 # Match the image you used in get-caches.sh
-FROM golang:1.24-bookworm
+FROM ubuntu:24.04
 
 # Keep Go in PATH and set default cache locations
 ENV PATH=/usr/local/go/bin:$PATH \
@@ -18,10 +18,8 @@ COPY ci-cache/apt/archives  /var/cache/apt/archives
 
 # Install strictly from cached .debs (no network). If anything is missing,
 # this will fail — rerun scripts/get-caches.sh and rebuild.
-RUN DEBIAN_FRONTEND=noninteractive \
-    apt-get install -y --no-install-recommends --no-download \
-      gettext libcurl4-openssl-dev ca-certificates build-essential pkg-config git curl \
- && rm -rf /var/lib/apt/lists/*
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-download \
+      gettext libcurl4-openssl-dev
 
 # --- Copy Go caches produced by scripts/get-caches.sh ---
 # Expecting:

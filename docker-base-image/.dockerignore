@@ -1,0 +1,4 @@
+ci-cache/apt/archives/lock
+ci-cache/apt/lists/lock
+ci-cache/**/partial*
+ci-cache/**/partial/** 
