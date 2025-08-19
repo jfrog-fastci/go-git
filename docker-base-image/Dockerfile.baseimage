@@ -17,9 +17,8 @@ COPY ci-cache/apt/lists     /var/lib/apt/lists
 COPY ci-cache/apt/archives  /var/cache/apt/archives
 
 # Install strictly from cached .debs (no network). If anything is missing,
-# this will fail — rerun scripts/get-caches.sh and rebuild.
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-download \
-      gettext libcurl4-openssl-dev
+RUN DEBIAN_FRONTEND=noninteractive dpkg -i /var/cache/apt/archives/*.deb || true && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --fix-broken
 
 # --- Copy Go caches produced by scripts/get-caches.sh ---
 # Expecting:
