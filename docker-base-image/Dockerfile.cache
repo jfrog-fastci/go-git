@@ -1,0 +1,33 @@
+FROM node:20-bookworm-slim
+#ghcr.io/catthehacker/ubuntu:custom-latest
+
+ARG GO_VERSION=1.25.0
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    GOPATH=/go \
+    GOMODCACHE=/go/pkg/mod \
+    GOCACHE=/root/.cache/go-build \
+    PATH=/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# Prepare cache directories
+RUN mkdir -p /var/cache/apt/archives /var/lib/apt/lists /go/pkg/mod /root/.cache/go-build
+
+# Minimal runtime deps for fetching Go and resolving VCS modules
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends gettext libcurl4-openssl-dev curl ca-certificates
+    #  && \
+    # rm -rf /var/lib/apt/lists/*
+
+# Install Go toolchain
+RUN curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz" -o /tmp/go.tgz && \
+    rm -rf /usr/local/go && tar -C /usr/local -xzf /tmp/go.tgz && rm -f /tmp/go.tgz
+
+# Persist caches when running with bind mounts
+VOLUME ["/var/cache/apt/archives", "/var/lib/apt/lists", "/go/pkg/mod", "/root/.cache/go-build"]
+
+WORKDIR /workspace
+
+# Copy and use a clean script to prefetch APT .debs and warm Go caches
+COPY docker-base-image/warm-cache.sh /usr/local/bin/warm-cache
+RUN chmod +x /usr/local/bin/warm-cache
+CMD ["/usr/local/bin/warm-cache"] 

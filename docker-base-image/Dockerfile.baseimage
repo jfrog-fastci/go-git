@@ -1,0 +1,32 @@
+# Dockerfile
+# Match the image you used in get-caches.sh
+FROM node:20-bookworm-slim
+#ghcr.io/catthehacker/ubuntu:custom-latest
+
+# Keep Go in PATH and set default cache locations
+ENV PATH=/usr/local/go/bin:$PATH \
+    GOPATH=/go \
+    GOMODCACHE=/go/pkg/mod \
+    GOCACHE=/root/.cache/go-build \
+    GO111MODULE=on
+
+# --- Copy APT caches produced by scripts/get-caches.sh ---
+# Expecting:
+#   ./ci-cache/apt/lists
+#   ./ci-cache/apt/archives
+COPY ci-cache/apt/lists     /var/lib/apt/lists
+COPY ci-cache/apt/archives  /var/cache/apt/archives
+
+# Install strictly from cached .debs (no network). If anything is missing,
+RUN DEBIAN_FRONTEND=noninteractive dpkg -i /var/cache/apt/archives/*.deb || true && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --fix-broken
+
+# --- Copy Go caches produced by scripts/get-caches.sh ---
+# Expecting:
+#   ./ci-cache/go-mod   -> /go/pkg/mod
+#   ./ci-cache/go-build -> /root/.cache/go-build
+RUN mkdir -p /go/pkg/mod /root/.cache/go-build
+COPY ci-cache/go-mod/      /go/pkg/mod/
+COPY ci-cache/go-build/    /root/.cache/go-build/
+
+WORKDIR /workspace
