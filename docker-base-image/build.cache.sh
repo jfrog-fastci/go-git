@@ -9,7 +9,7 @@ CACHE_ROOT=/home/yahavo/fastci/go-git/docker-base-image/ci-cache
 mkdir -p "$CACHE_ROOT/apt/archives" "$CACHE_ROOT/apt/lists" "$CACHE_ROOT/go-mod" "$CACHE_ROOT/go-build"
 
 docker run --rm \
-  -e PKGS="gettext libcurl4-openssl-dev sudo" \
+  -e PKGS="gettext libcurl4-openssl-dev sudo make" \
   -v /home/yahavo/fastci/go-git:/workspace \
   -v "$CACHE_ROOT/apt/archives":/var/cache/apt/archives \
   -v "$CACHE_ROOT/apt/lists":/var/lib/apt/lists \

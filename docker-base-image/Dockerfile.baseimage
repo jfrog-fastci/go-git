@@ -1,6 +1,7 @@
 # Dockerfile
 # Match the image you used in get-caches.sh
-FROM ghcr.io/catthehacker/ubuntu:custom-latest
+FROM node:20-bookworm-slim
+#ghcr.io/catthehacker/ubuntu:custom-latest
 
 # Keep Go in PATH and set default cache locations
 ENV PATH=/usr/local/go/bin:$PATH \
